@@ -26,7 +26,7 @@ function App() {
               </div>
               <div className="ml-3 flex-1">
                 <p className="text-sm text-blue-700">
-                  This is Step 5 (Lightpush) of the Waku Chat application. Some features shown in the UI are not yet implemented.
+                  This is Step 6 (Filter) of the Waku Chat application. Some features shown in the UI are not yet implemented.
                 </p>
               </div>
             </div>
