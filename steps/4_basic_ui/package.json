@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@libp2p/crypto": "^5.0.15",
+    "@tailwindcss/postcss": "^4.0.14",
     "@types/uuid": "^10.0.0",
     "@waku/sdk": "^0.0.30-5c50ed7.0",
     "protobufjs": "^7.4.0",
