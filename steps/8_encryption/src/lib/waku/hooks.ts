@@ -264,11 +264,6 @@ export function useHistoricalMessages() {
       setError(null);
       setProtocolError(null);
       
-      console.log("Waiting 2 seconds before querying historical messages...");
-      
-      // Add a 2-second delay before querying
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
       // Check if Store protocol is available
       if (!node.store) {
         const error = new Error("Store protocol is not available");
