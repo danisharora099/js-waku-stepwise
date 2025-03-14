@@ -13,28 +13,28 @@ export class WakuNodeManager {
    * @returns A promise that resolves to the started Waku Light Node
    */
   async initWakuNode({
-    defaultBootstrap = false,
-    customBootstrapNodes = CUSTOM_BOOTSTRAP_NODES,
     usePersistentPeerId = true,
-    seed = undefined
+    seed = undefined,
+    ...nodeOptions
   }: {
-    defaultBootstrap?: boolean;
     customBootstrapNodes?: string[];
     usePersistentPeerId?: boolean;
     seed?: string;
-  }): Promise<LightNode> {
+  } & Partial<CreateNodeOptions>): Promise<LightNode> {
     try {
-      // Get the private key for persistent peer ID if requested
       const options: CreateNodeOptions = { 
-        defaultBootstrap, 
-        bootstrapPeers: customBootstrapNodes 
+        ...nodeOptions,
       };
       
+      // Get the private key for persistent peer ID if requested
       if (usePersistentPeerId) {
         console.log("Using persistent Waku/libp2p Peer ID");
         const privateKey = await peerIdentityManager.getPrivateKey(seed);
         console.log("Generated private key from seed for Waku/libp2p Peer ID");
-        options.libp2p = { privateKey };
+        options.libp2p = { 
+          ...options.libp2p,
+          privateKey 
+        };
       } else {
         console.log("Using random Waku/libp2p Peer ID");
       }
