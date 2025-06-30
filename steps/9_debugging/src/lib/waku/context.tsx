@@ -2,6 +2,7 @@ import { createContext, useContext, useState, ReactNode, useRef, useCallback, us
 import { LightNode } from "@waku/sdk";
 import { wakuNodeManager } from "./node";
 import { encryptionManager, EncryptionType } from "./encryption";
+import { CUSTOM_BOOTSTRAP_NODES } from "../../constants";
 
 // Define the shape of our Waku context
 interface WakuContextType {
@@ -165,7 +166,12 @@ export function WakuProvider({
       
       // Initialize the Waku node
       const wakuNode = await wakuNodeManager.initWakuNode({
-        defaultBootstrap: true,
+        defaultBootstrap: false,
+        bootstrapPeers: CUSTOM_BOOTSTRAP_NODES,
+        networkConfig: {
+          clusterId: 42,
+          shards: [0, 1, 2, 3, 4, 5]
+        },
         usePersistentPeerId: true,
         seed: customSeed
       });

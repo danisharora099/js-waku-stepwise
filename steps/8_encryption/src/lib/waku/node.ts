@@ -13,7 +13,6 @@ export class WakuNodeManager {
    * @returns A promise that resolves to the started Waku Light Node
    */
   async initWakuNode({
-    defaultBootstrap = false,
     customBootstrapNodes = CUSTOM_BOOTSTRAP_NODES,
     usePersistentPeerId = true,
     seed = undefined
@@ -25,9 +24,13 @@ export class WakuNodeManager {
   }): Promise<LightNode> {
     try {
       // Get the private key for persistent peer ID if requested
-      const options: CreateNodeOptions = { 
-        defaultBootstrap, 
-        bootstrapPeers: customBootstrapNodes 
+      const options: CreateNodeOptions = {
+        networkConfig: {
+          clusterId: 42,
+          shards: [0, 1, 2, 3, 4, 5]
+        },
+        defaultBootstrap: false,
+        bootstrapPeers: customBootstrapNodes
       };
       
       if (usePersistentPeerId) {

@@ -218,6 +218,10 @@ export class EncryptionManager {
     if (!this._isEncryptionEnabled) {
       console.log("Creating unencrypted encoder (encryption disabled)");
       return createEncoder({
+        pubsubTopicShardInfo: {
+          clusterId: 42,
+          shard: 0
+        },
         contentTopic: CHAT_TOPIC,
         ephemeral: false
       });
@@ -227,12 +231,20 @@ export class EncryptionManager {
       if (!this.eciesKeys.peerPublicKey) {
         console.warn("Peer public key is required for ECIES encryption. Using unencrypted encoder.");
         return createEncoder({
+          pubsubTopicShardInfo: {
+            clusterId: 42,
+            shard: 0
+          },
           contentTopic: CHAT_TOPIC,
           ephemeral: false
         });
       }
       console.log("Creating ECIES encoder with peer public key");
       return ecies.createEncoder({
+        pubsubTopicShardInfo: {
+          clusterId: 42,
+          shard: 0
+        },
         contentTopic: CHAT_TOPIC,
         publicKey: this.eciesKeys.peerPublicKey,
         sigPrivKey: this.eciesKeys.privateKey || undefined
@@ -241,12 +253,20 @@ export class EncryptionManager {
       if (!this.symmetricKey) {
         console.warn("Symmetric key is required for symmetric encryption. Using unencrypted encoder.");
         return createEncoder({
+          pubsubTopicShardInfo: {
+            clusterId: 42,
+            shard: 0
+          },
           contentTopic: CHAT_TOPIC,
           ephemeral: false
         });
       }
       console.log("Creating symmetric encoder with key");
       return symmetric.createEncoder({
+        pubsubTopicShardInfo: {
+          clusterId: 42,
+          shard: 0
+        },
         contentTopic: CHAT_TOPIC,
         symKey: this.symmetricKey
       });
@@ -255,6 +275,10 @@ export class EncryptionManager {
     // Default to unencrypted
     console.log("Creating default unencrypted encoder");
     return createEncoder({
+      pubsubTopicShardInfo: {
+        clusterId: 42,
+        shard: 0
+      },
       contentTopic: CHAT_TOPIC,
       ephemeral: false
     });
@@ -266,13 +290,19 @@ export class EncryptionManager {
   createDecoder() {
     if (!this._isEncryptionEnabled) {
       console.log("Creating unencrypted decoder (encryption disabled)");
-      return createDecoder(CHAT_TOPIC);
+      return createDecoder(CHAT_TOPIC, {
+        shard: 0,
+        clusterId: 42
+      });
     }
 
     if (this._encryptionType === EncryptionType.ECIES) {
       if (!this.eciesKeys.privateKey) {
         console.warn("Private key is required for ECIES decryption. Using unencrypted decoder.");
-        return createDecoder(CHAT_TOPIC);
+        return createDecoder(CHAT_TOPIC, {
+          shard: 0,
+          clusterId: 42
+        });
       }
       console.log("Creating ECIES decoder with private key");
       return ecies.createDecoder(CHAT_TOPIC, this.eciesKeys.privateKey);

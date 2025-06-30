@@ -1,5 +1,4 @@
 import { createLightNode, waitForRemotePeer, type LightNode, type CreateNodeOptions } from "@waku/sdk";
-import { CUSTOM_BOOTSTRAP_NODES } from "../../constants";
 import { peerIdentityManager } from "./identity";
 
 /**

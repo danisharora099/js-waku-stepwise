@@ -12,15 +12,18 @@ export class WakuNodeManager {
    * @returns A promise that resolves to the started Waku Light Node
    */
   async initWakuNode({
-    defaultBootstrap = true,
     customBootstrapNodes = CUSTOM_BOOTSTRAP_NODES,
   }: {
-    defaultBootstrap?: boolean;
     customBootstrapNodes?: string[];
   }): Promise<LightNode> {
     try {
       // Create a Waku Light Node
-      this.node = await createLightNode({ defaultBootstrap, bootstrapPeers: customBootstrapNodes });
+      this.node = await createLightNode({ networkConfig: {
+        clusterId: 42,
+        shards: [0,1,2,3,4,5]
+      } ,
+    defaultBootstrap: false,
+  bootstrapPeers: customBootstrapNodes});
       
       // Start the node
       await this.node.start();

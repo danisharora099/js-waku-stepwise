@@ -13,7 +13,6 @@ export class WakuNodeManager {
    * @returns A promise that resolves to the started Waku Light Node
    */
   async initWakuNode({
-    defaultBootstrap = true,
     customBootstrapNodes = CUSTOM_BOOTSTRAP_NODES,
     usePersistentPeerId = true,
     seed = undefined
@@ -25,11 +24,15 @@ export class WakuNodeManager {
   }): Promise<LightNode> {
     try {
       // Get the private key for persistent peer ID if requested
-      const options: CreateNodeOptions = { 
-        defaultBootstrap, 
-        bootstrapPeers: customBootstrapNodes 
+      const options: CreateNodeOptions = {
+        networkConfig: {
+          clusterId: 42,
+          shards: [0, 1, 2, 3, 4, 5]
+        },
+        defaultBootstrap: false,
+        bootstrapPeers: customBootstrapNodes
       };
-      
+
       if (usePersistentPeerId) {
         console.log("Using persistent Waku/libp2p Peer ID");
         const privateKey = await peerIdentityManager.getPrivateKey(seed);
@@ -38,22 +41,22 @@ export class WakuNodeManager {
       } else {
         console.log("Using random Waku/libp2p Peer ID");
       }
-      
+
       // Create a Waku Light Node with the configured options
       this.node = await createLightNode(options);
-      
+
       // Log the peer ID for debugging
       const peerId = this.node.libp2p.peerId.toString();
       console.log("Waku/libp2p Peer ID:", peerId);
-      
+
       // Start the node
       await this.node.start();
       console.log("Waku node started");
-      
+
       // Wait for a connection to a peer
       await waitForRemotePeer(this.node);
       console.log("Connected to a peer");
-      
+
       return this.node;
     } catch (error) {
       console.error("Error initializing Waku node:", error);
@@ -66,12 +69,12 @@ export class WakuNodeManager {
    */
   async stopWakuNode(node?: LightNode): Promise<void> {
     const nodeToStop = node || this.node;
-    
+
     if (!nodeToStop) {
       console.warn("No Waku node to stop");
       return;
     }
-    
+
     try {
       await nodeToStop.stop();
       console.log("Waku node stopped");
@@ -90,12 +93,12 @@ export class WakuNodeManager {
    */
   getPeerCount(node?: LightNode): number {
     const targetNode = node || this.node;
-    
+
     if (!targetNode) {
       console.warn("Cannot get peer count: No Waku node available");
       return 0;
     }
-    
+
     // Get the number of peers
     const peers = targetNode.libp2p.getPeers();
     return peers.length;
@@ -107,12 +110,12 @@ export class WakuNodeManager {
    */
   isConnected(node?: LightNode): boolean {
     const targetNode = node || this.node;
-    
+
     if (!targetNode) {
       console.warn("Cannot check connection status: No Waku node available");
       return false;
     }
-    
+
     return this.getPeerCount(targetNode) > 0;
   }
 
@@ -122,12 +125,12 @@ export class WakuNodeManager {
    */
   getPeerId(node?: LightNode): string | null {
     const targetNode = node || this.node;
-    
+
     if (!targetNode) {
       console.warn("Cannot get Waku/libp2p Peer ID: No Waku node available");
       return null;
     }
-    
+
     return targetNode.libp2p.peerId.toString();
   }
 }
